@@ -26,14 +26,10 @@ if (files.length === 0) {
 
 files.forEach(function (file) {
     process.stdout.write('Validating ' + file + '...');
-    var module = require(path.resolve(process.cwd(), file));
-    if (typeof module !== 'function') {
-        console.error(colors.red(' Error!'));
-        console.error(colors.red(file + ' needs to export a single function'));
-        exitCode = 1;
-        return;
-    }
-    var source = String(module);
+    var filename = path.resolve(process.cwd(), file);
+    var module = require(filename);
+    var source = typeof module === 'function' ? String(module) :
+        fs.readFileSync(filename, "utf8");
     try {
         asm.validate(source);
         console.log(colors.green(' Success!'));
